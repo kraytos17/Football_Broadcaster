@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34407.89
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gc_Broadcasting_Api", "Gc_Broadcasting_Api.csproj", "{52824E95-AF42-43AB-A4C0-F57E1BF25C02}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{52824E95-AF42-43AB-A4C0-F57E1BF25C02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52824E95-AF42-43AB-A4C0-F57E1BF25C02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52824E95-AF42-43AB-A4C0-F57E1BF25C02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52824E95-AF42-43AB-A4C0-F57E1BF25C02}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9B35120C-7482-4D73-BE0E-98FCFC1F0791}
+	EndGlobalSection
+EndGlobal
