@@ -3,10 +3,10 @@
 namespace Gc_Broadcasting_Api.Interfaces;
 
 public interface ITeamRepo {
-    Task<IEnumerable<Team>> GetAllTeams();
-    Task<Team> GetTeam(string name);
-    Task<Team> GetTeam(int TeamId);
-    Task<bool> CreateTeam(Team team);
-    Task<bool> UpdateTeam(Team team);
-    Task<bool> DeleteTeam(int TeamId);
+    Task<IEnumerable<Team>> GetAllTeams(CancellationToken ct = default);
+    Task<Team> GetTeam(string name, CancellationToken ct = default);
+    Task<Team> GetTeam(int TeamId, CancellationToken ct = default);
+    Task<bool> CreateTeam(Team team, CancellationToken ct = default);
+    Task<bool> UpdateTeam(Team team, CancellationToken ct = default);
+    Task<bool> DeleteTeam(int TeamId, CancellationToken ct = default);
 }

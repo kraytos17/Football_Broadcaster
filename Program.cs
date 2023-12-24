@@ -14,28 +14,3 @@ if (app.Environment.IsDevelopment()) {
 }
 
 app.UseHttpsRedirection();
-
-//using Gc_Broadcasting_Api.Models;
-//using MongoDB.Driver;
-
-//string connectionString = "mongodb://localhost:27017";
-//string dbName = "Gc_Broadcasting_Football";
-//string collectionName = "Player";
-
-//var client = new MongoClient(connectionString);
-//var db = client.GetDatabase(dbName);
-//var collection = db.GetCollection<Player>(collectionName);
-
-//var player = new Player {
-//    Name = "Soumil",
-//    TeamId = 1
-//};
-
-//await collection.InsertOneAsync(player);
-
-//var result = await collection.FindAsync(_ => true);
-//foreach(var res in result.ToList()) {
-//    Console.WriteLine(res.Name);
-//    Console.WriteLine(res.Id);
-//    Console.WriteLine(res.TeamId);
-//}
