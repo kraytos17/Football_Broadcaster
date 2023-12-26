@@ -1,11 +1,19 @@
 ﻿using Gc_Broadcasting_Api.Interfaces;
 using Gc_Broadcasting_Api.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Gc_Broadcasting_Api.Repository;
 
-public sealed class PlayerRepository(Database database) : IPlayerRepo {
-    private readonly Database _database = database;
+public sealed class PlayerRepository : IPlayerRepo {
+    private readonly IMongoCollection<Player> _playerCollection;
+
+    public PlayerRepository(IOptions<DatabaseSettings> dbSettings)
+    {
+        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
+        _playerCollection = mongoDb.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
+    }
 
     public async Task<bool> CreatePlayer(Player player, CancellationToken ct = default) {
         ct.ThrowIfCancellationRequested();
@@ -13,10 +21,10 @@ public sealed class PlayerRepository(Database database) : IPlayerRepo {
         if (player is null) { return false; }
 
         try {
-            await _database.Players.InsertOneAsync(player, null, ct);
+            await _playerCollection.InsertOneAsync(player, null, ct);
             return true;
         }
-        catch (Exception){
+        catch (Exception) {
             throw;
         } 
     }
@@ -30,8 +38,9 @@ public sealed class PlayerRepository(Database database) : IPlayerRepo {
         if (filter is null) { return false; }
 
         try {
-            await _database.Players.DeleteOneAsync(filter, null, ct);
-            return true;
+            var res = await _playerCollection.DeleteOneAsync(filter, null, ct);
+            if (res.DeletedCount > 0 && res.IsAcknowledged) return true;
+            return false;
         }
         catch (Exception) {
             throw;
@@ -47,7 +56,7 @@ public sealed class PlayerRepository(Database database) : IPlayerRepo {
         if (filter is null) { return new Player { }; }
 
         try {
-            return await _database.Players.Find(filter).FirstOrDefaultAsync(ct);
+            return await _playerCollection.Find(filter).FirstOrDefaultAsync(ct);
         }
         catch (Exception){
             throw;
@@ -63,7 +72,7 @@ public sealed class PlayerRepository(Database database) : IPlayerRepo {
         if (filter is null) { return Enumerable.Empty<Player>(); } 
 
         try {
-            var res = await _database.Players.FindAsync(filter, null, ct);
+            var res = await _playerCollection.FindAsync(filter, null, ct);
             return await res.ToListAsync(ct);
         }
         catch (Exception){ return Enumerable.Empty<Player>(); }
@@ -77,7 +86,7 @@ public sealed class PlayerRepository(Database database) : IPlayerRepo {
         var filter = Builders<Player>.Filter.Eq(p => p.Id, newPlayerDetails.Id);
         if (filter is null) { return false; }
 
-        var oldPlayerDetails = await _database.Players.Find(filter).FirstOrDefaultAsync(ct);
+        var oldPlayerDetails = await _playerCollection.Find(filter).FirstOrDefaultAsync(ct);
         if (oldPlayerDetails is null) { return false; }
 
         try {
@@ -95,9 +104,9 @@ public sealed class PlayerRepository(Database database) : IPlayerRepo {
                 .Set(u => u.Age, newPlayerDetails.Age)
                 .Set(u => u.TeamId, newPlayerDetails.TeamId);
 
-            var update = await _database.Players.UpdateOneAsync (p => p.Id == newPlayerDetails.Id, updateCondition, null, ct);
-
-            return true;
+            var update = await _playerCollection.UpdateOneAsync(p => p.Id == newPlayerDetails.Id, updateCondition, null, ct);
+            if (update.ModifiedCount > 0) return true;
+            return false;
         }
         catch (Exception) {
             throw;

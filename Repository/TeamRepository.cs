@@ -1,19 +1,26 @@
 ﻿using Gc_Broadcasting_Api.Interfaces;
 using Gc_Broadcasting_Api.Models;
+using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace Gc_Broadcasting_Api.Repository;
 
-public sealed class TeamRepository(Database database) : ITeamRepo {
-    private readonly Database _database = database;
+public sealed class TeamRepository : ITeamRepo {
+    private readonly IMongoCollection<Team> _teamCollection;
 
+    public TeamRepository(IOptions<DatabaseSettings> dbSettings)
+    {
+        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
+        _teamCollection = mongoDb.GetCollection<Team>(dbSettings.Value.TeamCollectionName);
+    }
     public async Task<bool> CreateTeam(Team team, CancellationToken ct = default) {
         ct.ThrowIfCancellationRequested();
 
         if (team is null) { return false; }
 
         try {
-            await _database.Teams.InsertOneAsync(team, null, ct);
+            await _teamCollection.InsertOneAsync(team, null, ct);
             return true;
         }
         catch (Exception) {
@@ -30,8 +37,9 @@ public sealed class TeamRepository(Database database) : ITeamRepo {
         if (filter is null) { return false; }
 
         try {
-            await _database.Teams.DeleteOneAsync(filter, null, ct);
-            return true;
+            var res = await _teamCollection.DeleteOneAsync(filter, null, ct);
+            if (res.DeletedCount > 0 && res.IsAcknowledged) { return true; }
+            return false;
         }
         catch (Exception) {
             throw;
@@ -45,7 +53,7 @@ public sealed class TeamRepository(Database database) : ITeamRepo {
         if (filter is null) { return Enumerable.Empty<Team>(); }
 
         try {
-            var res = await _database.Teams.FindAsync(filter, null, ct);
+            var res = await _teamCollection.FindAsync(filter, null, ct);
             return await res.ToListAsync(ct);
         }
         catch (Exception) { return Enumerable.Empty<Team>(); }
@@ -58,7 +66,7 @@ public sealed class TeamRepository(Database database) : ITeamRepo {
         if (filter is null) { return new Team { }; }
 
         try {
-            return await _database.Teams.Find(filter).FirstOrDefaultAsync(ct);
+            return await _teamCollection.Find(filter).FirstOrDefaultAsync(ct);
         }
         catch (Exception) {
             throw;
@@ -72,7 +80,7 @@ public sealed class TeamRepository(Database database) : ITeamRepo {
         if (filter is null) { return new Team { }; }
 
         try {
-            return await _database.Teams.Find(filter).FirstOrDefaultAsync(ct);
+            return await _teamCollection.Find(filter).FirstOrDefaultAsync(ct);
         }
         catch (Exception) {
             throw;
@@ -85,7 +93,7 @@ public sealed class TeamRepository(Database database) : ITeamRepo {
         var filter = Builders<Team>.Filter.Eq(t => t.Id, team.Id);
         if (filter is null) { return false; }
 
-        var oldTeam = await _database.Teams.Find(filter).FirstOrDefaultAsync(ct);
+        var oldTeam = await _teamCollection.Find(filter).FirstOrDefaultAsync(ct);
         if(oldTeam is null) { return false; }
 
         try {
@@ -100,8 +108,9 @@ public sealed class TeamRepository(Database database) : ITeamRepo {
                 .Set(u => u.MatchesWon, team.MatchesWon)
                 .Set(u => u.TeamId, team.TeamId);
 
-            var res = await _database.Teams.UpdateOneAsync(filter, updateDef, null, ct);
-            return true;
+            var res = await _teamCollection.UpdateOneAsync(filter, updateDef, null, ct);
+            if (res.ModifiedCount > 0) { return true; }
+            return false;
         }
         catch (Exception) {
             throw;

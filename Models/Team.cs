@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace Gc_Broadcasting_Api.Models;
 
+[BsonIgnoreExtraElements]
 public class Team {
     [BsonElement("name")]
     [BsonRequired]
