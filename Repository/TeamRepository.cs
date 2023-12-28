@@ -90,7 +90,7 @@ public sealed class TeamRepository : ITeamRepo {
     public async Task<bool> UpdateTeam(Team team, CancellationToken ct = default) {
         ct.ThrowIfCancellationRequested();
 
-        var filter = Builders<Team>.Filter.Eq(t => t.Id, team.Id);
+        var filter = Builders<Team>.Filter.Eq(t => t.TeamId, team.TeamId);
         if (filter is null) { return false; }
 
         var oldTeam = await _teamCollection.Find(filter).FirstOrDefaultAsync(ct);
@@ -104,7 +104,6 @@ public sealed class TeamRepository : ITeamRepo {
                 .Set(u => u.GoalDifference, team.GoalDifference)
                 .Set(u => u.GamesPlayed, team.GamesPlayed)
                 .Set(u => u.Points, team.Points)
-                .Set(u => u.Id, team.Id)
                 .Set(u => u.MatchesWon, team.MatchesWon)
                 .Set(u => u.TeamId, team.TeamId);
 

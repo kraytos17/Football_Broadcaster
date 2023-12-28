@@ -1,6 +1,7 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 using System.Diagnostics.CodeAnalysis;
+
 namespace Gc_Broadcasting_Api.Models;
 
 [BsonIgnoreExtraElements]
