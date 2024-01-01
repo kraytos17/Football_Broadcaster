@@ -40,8 +40,8 @@ public static class TeamEndpoints
         {
             return TypedResults.BadRequest("Name param cannot be empty or just whitespaces.");
         }
-        Team team = await teamRepo.GetTeam(name, ct)
-            ?? throw new NullReferenceException("Team object reference is null");
+        Team team = await teamRepo.GetTeam(name, ct);
+         if (team is null) { throw new NullReferenceException("Team object reference is null"); }
         if (string.IsNullOrEmpty(team.Id) || string.IsNullOrWhiteSpace(team.Id))
         {
             return TypedResults.NotFound(name);

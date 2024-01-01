@@ -66,7 +66,7 @@ public sealed class TeamRepository : ITeamRepo {
         if (filter is null) { return new Team { }; }
 
         try {
-            return await _teamCollection.Find(filter).FirstOrDefaultAsync(ct);
+             return await _teamCollection.Find(filter).FirstOrDefaultAsync(ct);
         }
         catch (Exception) {
             throw;

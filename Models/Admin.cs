@@ -9,7 +9,7 @@ public class Admin {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
     [NotNull]
-    public int Id { get; set; }
+    public string? Id { get; set; }
     [BsonElement("Username")]
     public string? Username {  get; set; }
     [BsonElement("Password")]

@@ -14,6 +14,7 @@ builder.Services.AddScoped<IValidator<Player>, PlayerRequestValidator>();
 builder.Services.AddScoped<IValidator<Team>, TeamRequestValidator>();
 builder.Services.AddSingleton<IPlayerRepo, PlayerRepository>();
 builder.Services.AddSingleton<ITeamRepo, TeamRepository>();
+builder.Services.AddSingleton<IAdminRepo, AdminRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -28,4 +29,5 @@ if (app.Environment.IsDevelopment()) {
 app.UseHttpsRedirection();
 PlayerEndpoints.MapPlayerEndpoints(app);
 TeamEndpoints.MapTeamEndpoints(app);
+AdminEndpoints.MapAdminEndpoints(app);
 app.Run();
