@@ -16,7 +16,7 @@ public class Player
     public string? Id { get; set; }
     [BsonElement("image_link")]
     [BsonRequired]
-    public string? Imagelink { get; set; }
+    public string? ImageLink { get; set; }
     [BsonElement("position")]
     [BsonRequired]
     public string? Position { get; set; }

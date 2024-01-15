@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using FluentValidation.Results;
 using Gc_Broadcasting_Api.Interfaces;
 using Gc_Broadcasting_Api.Models;
 
@@ -14,7 +15,7 @@ public static class PlayerEndpoints
         group.MapPut("/", UpdatePlayer);
         //group.MapPatch("{name}", UpdateStats);
         group.MapDelete("{playerId}", DeletePlayer);
-        app.MapGet("api/players/{teamId}", GetPlayersByTeamId);
+        app.MapGet("api/players/{teamId:int}", GetPlayersByTeamId);
     }
 
     public static async Task<IResult> CreatePlayer(Player player, IPlayerRepo playerRepo, IValidator<Player> playerRequestValidator, CancellationToken ct)
@@ -25,7 +26,7 @@ public static class PlayerEndpoints
         {
             return TypedResults.BadRequest("Validation error, invalid player data.");
         }
-        bool created = await playerRepo.CreatePlayer(player, ct);
+        var created = await playerRepo.CreatePlayer(player, ct);
         if (!created)
         {
             return TypedResults.StatusCode(500);
@@ -40,8 +41,8 @@ public static class PlayerEndpoints
         {
             return TypedResults.BadRequest("Name param cannot be empty or just whitespaces.");
         }
-        Player player = await playerRepo.GetPlayer(name, ct)
-            ?? throw new NullReferenceException("Player object reference is null");
+        var player = await playerRepo.GetPlayer(name, ct)
+                     ?? throw new NullReferenceException("Player object reference is null");
         if (string.IsNullOrEmpty(player.Id) || string.IsNullOrWhiteSpace(player.Id))
         {
             return TypedResults.NotFound(name);
@@ -69,7 +70,7 @@ public static class PlayerEndpoints
         {
             return TypedResults.BadRequest("Validation error, invalid player data.");
         }
-        bool updated = await playerRepo.UpdatePlayer(player, ct);
+        var updated = await playerRepo.UpdatePlayer(player, ct);
         if (!updated)
         {
             return TypedResults.StatusCode(500);
@@ -84,7 +85,7 @@ public static class PlayerEndpoints
         {
             return TypedResults.BadRequest("PlayerId cannot be empty or just whitespaces.");
         }
-        bool deleted = await playerRepo.DeletePlayer(playerId, ct);
+        var deleted = await playerRepo.DeletePlayer(playerId, ct);
         if (!deleted)
         {
             return TypedResults.StatusCode(500);

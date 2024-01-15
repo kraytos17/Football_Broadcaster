@@ -4,13 +4,9 @@ using Gc_Broadcasting_Api.Models;
 namespace Gc_Broadcasting_Api.Validator;
 
 public sealed class PlayerRequestValidator : AbstractValidator<Player> {
-    private readonly IConfiguration _configuration;
-
     public PlayerRequestValidator(IConfiguration configuration) {
-        _configuration = configuration;
-
-        string[] branches = _configuration["BranchNames"].Split(",");
-        string[] positions = _configuration["FootballPos"].Split(",");
+        string[]? branches = configuration["BranchNames"]?.Split(",");
+        string[]? positions = configuration["FootballPos"]?.Split(",");
 
         RuleFor(x => x.Name)
             .Cascade(CascadeMode.Stop)
@@ -24,11 +20,11 @@ public sealed class PlayerRequestValidator : AbstractValidator<Player> {
         RuleFor(x => x.Branch)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .Must(x => branches.Contains(x));
+            .Must(x => branches != null && branches.Contains(x));
         RuleFor(x => x.Position)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
-            .Must(p => positions.Contains(p));
+            .Must(p => positions != null && positions.Contains(p));
         RuleFor(x => x.Year)
             .Cascade(CascadeMode.Stop)
             .NotEmpty()
@@ -58,12 +54,8 @@ public sealed class PlayerRequestValidator : AbstractValidator<Player> {
 }
 
 public sealed class TeamRequestValidator : AbstractValidator<Team> {
-    private readonly IConfiguration _config;
-
     public TeamRequestValidator(IConfiguration config) {
-        _config = config;
-
-        int teamCount = _config["TeamNames"].Split(",").Length;
+        var teamCount = config["TeamNames"]!.Split(",").Length;
 
         RuleFor(x => x.GamesPlayed)
             .Cascade(CascadeMode.Stop)

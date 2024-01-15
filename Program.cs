@@ -7,8 +7,6 @@ using Gc_Broadcasting_Api.Validator;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("MongoDb"));
 builder.Services.AddScoped<IValidator<Player>, PlayerRequestValidator>();
 builder.Services.AddScoped<IValidator<Team>, TeamRequestValidator>();
@@ -20,14 +18,13 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-//Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-PlayerEndpoints.MapPlayerEndpoints(app);
-TeamEndpoints.MapTeamEndpoints(app);
-AdminEndpoints.MapAdminEndpoints(app);
+app.MapPlayerEndpoints();
+app.MapTeamEndpoints();
+app.MapAdminEndpoints();
 app.Run();
