@@ -14,4 +14,6 @@ public class Admin {
     public string? Username {  get; set; }
     [BsonElement("Password")]
     public string? Password { get; set; }
+    
+    //TODO : - Maybe add temp admin access for scorekeepers?
 }

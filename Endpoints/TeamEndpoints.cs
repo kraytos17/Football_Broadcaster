@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Results;
 using Gc_Broadcasting_Api.Interfaces;
 using Gc_Broadcasting_Api.Models;
 
@@ -20,85 +19,148 @@ public static class TeamEndpoints
 
     public static async Task<IResult> CreateTeam(Team team, ITeamRepo teamRepo, IValidator<Team> teamRequestValidator, CancellationToken ct)
     {
-        ct.ThrowIfCancellationRequested();
-        var res = await teamRequestValidator.ValidateAsync(team, ct);
-        if (!res.IsValid)
+        try
         {
-            return TypedResults.BadRequest("Validation error, invalid team data.");
+            ct.ThrowIfCancellationRequested();
+            var res = await teamRequestValidator.ValidateAsync(team, ct);
+            if (!res.IsValid)
+            {
+                return TypedResults.BadRequest("Validation error, invalid team data.");
+            }
+
+            var created = await teamRepo.CreateTeam(team, ct);
+            if (!created)
+            {
+                return TypedResults.StatusCode(500);
+            }
+
+            return TypedResults.Created();
         }
-        var created = await teamRepo.CreateTeam(team, ct);
-        if (!created)
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             return TypedResults.StatusCode(500);
         }
-        return TypedResults.Created();
     }
 
     public static async Task<IResult> GetTeamByName(string name, ITeamRepo teamRepo, CancellationToken ct)
     {
-        ct.ThrowIfCancellationRequested();
-        if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
+        try
         {
-            return TypedResults.BadRequest("Name param cannot be empty or just whitespaces.");
+            ct.ThrowIfCancellationRequested();
+            if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
+            {
+                return TypedResults.BadRequest(
+                    "Name param cannot be empty or just whitespaces.");
+            }
+
+            var team = await teamRepo.GetTeam(name, ct);
+            if (team is null)
+            {
+                throw new NullReferenceException("Team object reference is null");
+            }
+
+            if (string.IsNullOrEmpty(team.Id) || string.IsNullOrWhiteSpace(team.Id))
+            {
+                return TypedResults.NotFound(name);
+            }
+
+            return TypedResults.Ok(team);
         }
-        var team = await teamRepo.GetTeam(name, ct);
-         if (team is null) { throw new NullReferenceException("Team object reference is null"); }
-        if (string.IsNullOrEmpty(team.Id) || string.IsNullOrWhiteSpace(team.Id))
+        catch (Exception ex)
         {
-            return TypedResults.NotFound(name);
+            Console.WriteLine(ex);
+            return TypedResults.StatusCode(500);
         }
-        return TypedResults.Ok(team);
     }
 
     public static async Task<IResult> GetTeamByTeamId(int teamId, ITeamRepo teamRepo, CancellationToken ct)
     {
-        ct.ThrowIfCancellationRequested();
-        if (teamId <= 0)
+        try
         {
-            return TypedResults.BadRequest("Team Id cannot be zero or negative.");
+            ct.ThrowIfCancellationRequested();
+            if (teamId <= 0)
+            {
+                return TypedResults.BadRequest("Team Id cannot be zero or negative.");
+            }
+
+            var team = await teamRepo.GetTeam(teamId, ct)
+                       ?? throw new NullReferenceException(
+                           "Team object reference is null.");
+            return TypedResults.Ok(team);
         }
-        var team = await teamRepo.GetTeam(teamId, ct)
-                   ?? throw new NullReferenceException("Team object reference is null.");
-        return TypedResults.Ok(team);
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return TypedResults.StatusCode(500);
+        }
     }
 
     public static async Task<IResult> UpdateTeam(Team team, ITeamRepo teamRepo, IValidator<Team> teamRequestValidator, CancellationToken ct)
     {
-        ct.ThrowIfCancellationRequested();
-        var res = await teamRequestValidator.ValidateAsync(team, ct);
-        if (!res.IsValid)
+        try
         {
-            return TypedResults.BadRequest("Validation error, invalid team data.");
-        }        
-        var updated = await teamRepo.UpdateTeam(team, ct);
-        if (!updated)
+            ct.ThrowIfCancellationRequested();
+            var res = await teamRequestValidator.ValidateAsync(team, ct);
+            if (!res.IsValid)
+            {
+                return TypedResults.BadRequest("Validation error, invalid team data.");
+            }
+
+            var updated = await teamRepo.UpdateTeam(team, ct);
+            if (!updated)
+            {
+                return TypedResults.StatusCode(500);
+            }
+
+            return TypedResults.Ok();
+        }
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             return TypedResults.StatusCode(500);
         }
-        return TypedResults.Ok();
     }
 
     public static async Task<IResult> DeleteTeam(int teamId, ITeamRepo teamRepo, CancellationToken ct)
     {
-        ct.ThrowIfCancellationRequested();
-        if (teamId <= 0)
+        try
         {
-            return TypedResults.BadRequest("TeamId cannot be zero or negative.");
+            ct.ThrowIfCancellationRequested();
+            if (teamId <= 0)
+            {
+                return TypedResults.BadRequest("TeamId cannot be zero or negative.");
+            }
+
+            var deleted = await teamRepo.DeleteTeam(teamId, ct);
+            if (!deleted)
+            {
+                return TypedResults.StatusCode(500);
+            }
+
+            return TypedResults.Ok();
         }
-        var deleted = await teamRepo.DeleteTeam(teamId, ct);
-        if (!deleted)
+        catch (Exception ex)
         {
+            Console.WriteLine(ex);
             return TypedResults.StatusCode(500);
         }
-        return TypedResults.Ok();
     }
 
     public static async Task<IResult> GetAllTeams(ITeamRepo teamRepo, CancellationToken ct)
     {
-        ct.ThrowIfCancellationRequested();
-        IEnumerable<Team> res = await teamRepo.GetAllTeams(ct)
-                                ?? throw new NullReferenceException("Team enumerable has null reference.");
-        return TypedResults.Ok(res);
+        try
+        {
+            ct.ThrowIfCancellationRequested();
+            var res = await teamRepo.GetAllTeams(ct)
+                      ?? throw new NullReferenceException(
+                          "Team enumerable has null reference.");
+            return TypedResults.Ok(res);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            return TypedResults.StatusCode(500);
+        }
     }
 }
-

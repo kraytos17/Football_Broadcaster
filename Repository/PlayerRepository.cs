@@ -7,11 +7,16 @@ namespace Gc_Broadcasting_Api.Repository;
 
 public sealed class PlayerRepository : IPlayerRepo {
     private readonly IMongoCollection<Player> _playerCollection;
-    public PlayerRepository(IOptions<DatabaseSettings> dbSettings)
+    // public PlayerRepository(IOptions<DatabaseSettings> dbSettings)
+    // {
+    //     var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+    //     var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
+    //     _playerCollection = mongoDb.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
+    // }
+    
+    public PlayerRepository(DatabaseService dbService, IOptions<DatabaseSettings> dbSettings)
     {
-        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-        var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
-        _playerCollection = mongoDb.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
+        _playerCollection = dbService.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
     }
 
     public async Task<bool> CreatePlayer(Player? player, CancellationToken ct) {
@@ -45,12 +50,8 @@ public sealed class PlayerRepository : IPlayerRepo {
 
         var filter = Builders<Player>.Filter.Eq(x => x.TeamId, teamId);
         if (filter is null) { return Enumerable.Empty<Player>(); } 
-
-        try {
-            var res = await _playerCollection.FindAsync(filter, null, ct);
-            return await res.ToListAsync(ct);
-        }
-        catch (Exception){ return Enumerable.Empty<Player>(); }
+        var res = await _playerCollection.FindAsync(filter, null, ct);
+        return await res.ToListAsync(ct);
     }
 
     public async Task<bool> UpdatePlayer(Player newPlayerDetails, CancellationToken ct) {

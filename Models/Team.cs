@@ -8,30 +8,29 @@ namespace Gc_Broadcasting_Api.Models;
 public class Team {
     [BsonElement("name")]
     [BsonRequired]
-    public string? Name { get; set; }
+    public string? Name { get; }
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    [NotNull]
-    public string? Id { get; set; }
+    public string? Id { get; }
     [BsonElement("team_id")]
     [BsonRequired]
-    public int TeamId { get; set; }
+    public int TeamId { get; }
     [BsonElement("league_position")]
     [BsonRequired]
-    public int? LeaguePosition { get; set; }
+    public int? LeaguePosition { get; }
     [BsonElement("matches_won")]
     [BsonRequired]
-    public int MatchesWon { get; set; }
+    public int MatchesWon { get; }
     [BsonElement("matches_lost")]
     [BsonRequired]
-    public int MatchesLost { get; set; }
+    public int MatchesLost { get; }
     [BsonElement("games_played")]
     [BsonRequired]
-    public int GamesPlayed { get; set; }
+    public int GamesPlayed { get; }
     [BsonElement("goal_difference")]
     [BsonRequired]
-    public int GoalDifference { get; set; }
+    public int GoalDifference { get; }
     [BsonElement("points")]
     [BsonRequired]
-    public int Points { get; set; }
+    public int Points { get; }
 }
