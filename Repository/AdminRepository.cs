@@ -8,11 +8,18 @@ using MongoDB.Driver;
 namespace Gc_Broadcasting_Api.Repository;
 
 public sealed class AdminRepository : IAdminRepo {
-   private readonly IMongoCollection<Admin> _adminCollection;
+    private readonly IMongoCollection<Admin> _adminCollection;
    
-   public AdminRepository(DatabaseService dbService, IOptions<DatabaseSettings> dbSettings)
+   // public AdminRepository(DatabaseService dbService, IOptions<DatabaseSettings> dbSettings)
+   // {
+   //     _adminCollection = dbService.GetCollection<Admin>(dbSettings.Value.AdminCollectionName);
+   // }
+   
+   public AdminRepository(IOptions<DatabaseSettings> dbSettings)
    {
-       _adminCollection = dbService.GetCollection<Admin>(dbSettings.Value.AdminCollectionName);
+       var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
+       var mongoDatabase = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
+       _adminCollection = mongoDatabase.GetCollection<Admin>(dbSettings.Value.AdminCollectionName);
    }
    public async Task<bool> CreateAdmin(Admin? admin) {
        ArgumentNullException.ThrowIfNull(nameof(Admin));
