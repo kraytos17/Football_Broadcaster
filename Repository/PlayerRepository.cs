@@ -7,12 +7,6 @@ namespace Gc_Broadcasting_Api.Repository;
 
 public sealed class PlayerRepository : IPlayerRepo {
     private readonly IMongoCollection<Player> _playerCollection;
-    // public PlayerRepository(IOptions<DatabaseSettings> dbSettings)
-    // {
-    //     var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-    //     var mongoDb = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
-    //     _playerCollection = mongoDb.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
-    // }
     
     public PlayerRepository(DatabaseService dbService, IOptions<DatabaseSettings> dbSettings)
     {
