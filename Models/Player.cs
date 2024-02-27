@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
-using System.Diagnostics.CodeAnalysis;
 
 namespace Gc_Broadcasting_Api.Models;
 
@@ -9,35 +8,44 @@ public class Player
 {
     [BsonElement("name")]
     [BsonRequired]
-    public string? Name { get; set; }
+    public string Name { get; private set; } = string.Empty;
+
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    [NotNull]
-    public string? Id { get; set; }
+    public string Id { get; private set; } = string.Empty;
+
     [BsonElement("image_link")]
     [BsonRequired]
-    public string? ImageLink { get; set; }
+    public string ImageLink { get; private set; } = string.Empty;
+
     [BsonElement("position")]
     [BsonRequired]
-    public string? Position { get; set; }
+    public string Position { get; private set; } = string.Empty;
+
     [BsonElement("branch")]
     [BsonRequired]
-    public string? Branch { get; set; }
+    public string Branch { get; private set; } = string.Empty;
+
     [BsonElement("age")]
     [BsonRequired]
-    public int Age { get; set; }
+    public int Age { get; private set; } = 0;
+
     [BsonElement("year")]
     [BsonRequired]
-    public int Year { get; set; }
+    public int Year { get; private set; } = 0;
+
     [BsonElement("instagram")]
-    public string? Instagram { get; set; }
-    [BsonElement("goals")]
+    public string Instagram { get; private set; } = string.Empty;
+
+    [BsonElement("goals")] 
     public int Goals { get; set; }
     [BsonElement("assists")]
     public int Assists { get; set; }
+
     [BsonElement("college_id")]
     [BsonRequired]
-    public string? CollegeId { get; set; }
+    public string CollegeId { get; private set; } = string.Empty;
+
     [BsonElement("team_id")]
-    public int TeamId { get; set; }
+    public int TeamId { get; private set; } = 0;
 }

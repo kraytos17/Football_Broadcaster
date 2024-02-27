@@ -8,28 +8,17 @@ namespace Gc_Broadcasting_Api.Repository;
 public sealed class PlayerRepository : IPlayerRepo {
     private readonly IMongoCollection<Player> _playerCollection;
     
-    // public PlayerRepository(DatabaseService dbService, IOptions<DatabaseSettings> dbSettings)
-    // {
-    //     _playerCollection = dbService.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
-    // }
-    
-    public PlayerRepository(IOptions<DatabaseSettings> dbSettings)
-    {
-        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-        var mongoDatabase = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
-        _playerCollection = mongoDatabase.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
+    public PlayerRepository(IOptions<DatabaseSettings> dbSettings) {
+        var dbService = new DatabaseService(dbSettings);
+        _playerCollection = dbService.GetCollection<Player>(dbSettings.Value.PlayerCollectionName);
     }
 
-    public async Task<bool> CreatePlayer(Player? player, CancellationToken ct) {
-        if (player is null) { return false; }
-
+    public async Task<bool> CreatePlayer(Player player, CancellationToken ct) {
         await _playerCollection.InsertOneAsync(player, null, ct);
         return true;
     }
 
-    public async Task<bool> DeletePlayer(string? playerId, CancellationToken ct) {
-        if (playerId is null) { return false; }
-
+    public async Task<bool> DeletePlayer(string playerId, CancellationToken ct) {
         var filter = Builders<Player>.Filter.Eq(r => r.Id, playerId);
         if (filter is null) { return false; }
 
@@ -37,9 +26,7 @@ public sealed class PlayerRepository : IPlayerRepo {
         return res.DeletedCount > 0 && res.IsAcknowledged;
     }
 
-    public async Task<Player> GetPlayer(string? name, CancellationToken ct) {
-        ArgumentNullException.ThrowIfNull(name);
-
+    public async Task<Player> GetPlayer(string name, CancellationToken ct) {
         var filter = Builders<Player>.Filter.Eq(x => x.Name, name);
         if (filter is null) { return new Player(); }
 
@@ -81,16 +68,16 @@ public sealed class PlayerRepository : IPlayerRepo {
         return update.ModifiedCount > 0;
     }
 
-    public async Task<Player> UpdatePlayerStats(int goals, int assists, string name, CancellationToken ct = default) {
-        if (goals <= 0 && assists <= 0) {
-            throw new ArgumentException("Goals and assists must be greater than zero.");
-        }
-        var filter = Builders<Player>.Filter.Eq(p => p.Name, name);
-    
-        var playerStats = await _playerCollection.Find(filter).FirstOrDefaultAsync(ct)
-            ?? throw new NullReferenceException("PlayerStats object has null reference.");
-        playerStats.Assists += assists;
-        playerStats.Goals += goals;
-        return playerStats;
-    }
+    // public async Task<Player> UpdatePlayerStats(int goals, int assists, string name, CancellationToken ct = default) {
+    //     if (goals <= 0 && assists <= 0) {
+    //         throw new ArgumentException("Goals and assists must be greater than zero.");
+    //     }
+    //     var filter = Builders<Player>.Filter.Eq(p => p.Name, name);
+    //
+    //     var playerStats = await _playerCollection.Find(filter).FirstOrDefaultAsync(ct)
+    //         ?? throw new NullReferenceException("PlayerStats object has null reference.");
+    //     playerStats.Assists += assists;
+    //     playerStats.Goals += goals;
+    //     return playerStats;
+    // }
 }

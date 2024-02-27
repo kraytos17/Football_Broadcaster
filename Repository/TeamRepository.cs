@@ -8,17 +8,11 @@ namespace Gc_Broadcasting_Api.Repository;
 public sealed class TeamRepository : ITeamRepo {
     private readonly IMongoCollection<Team> _teamCollection;
     
-    // public TeamRepository(DatabaseService dbService, IOptions<DatabaseSettings> dbSettings)
-    // {
-    //     _teamCollection = dbService.GetCollection<Team>(dbSettings.Value.TeamCollectionName);
-    // }
-
-    public TeamRepository(IOptions<DatabaseSettings> dbSettings)
-    {
-        var mongoClient = new MongoClient(dbSettings.Value.ConnectionString);
-        var mongoDatabase = mongoClient.GetDatabase(dbSettings.Value.DatabaseName);
-        _teamCollection = mongoDatabase.GetCollection<Team>(dbSettings.Value.TeamCollectionName);
+    public TeamRepository(IOptions<DatabaseSettings> dbSettings) {
+        var dbService = new DatabaseService(dbSettings);
+        _teamCollection = dbService.GetCollection<Team>(dbSettings.Value.TeamCollectionName);
     }
+    
     public async Task<bool> CreateTeam(Team? team, CancellationToken ct = default) {
         ct.ThrowIfCancellationRequested();
 

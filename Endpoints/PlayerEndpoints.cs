@@ -17,7 +17,7 @@ public static class PlayerEndpoints
         app.MapGet("api/players/{teamId:int}", GetPlayersByTeamId);
     }
 
-    public static async Task<IResult> CreatePlayer(Player player, IPlayerRepo playerRepo, IValidator<Player> playerRequestValidator, CancellationToken ct)
+    private static async Task<IResult> CreatePlayer(Player player, IPlayerRepo playerRepo, IValidator<Player> playerRequestValidator, CancellationToken ct)
     {
         try
         {
@@ -43,7 +43,7 @@ public static class PlayerEndpoints
         }
     }
 
-    public static async Task<IResult> GetPlayerByName(string name, IPlayerRepo playerRepo, CancellationToken ct)
+    private static async Task<IResult> GetPlayerByName(string name, IPlayerRepo playerRepo, CancellationToken ct)
     {
         try
         {
@@ -71,7 +71,7 @@ public static class PlayerEndpoints
         }
     }
 
-    public static async Task<IResult> GetPlayersByTeamId(int teamId, IPlayerRepo playerRepo, CancellationToken ct)
+    private static async Task<IResult> GetPlayersByTeamId(int teamId, IPlayerRepo playerRepo, CancellationToken ct)
     {
         try
         {
@@ -93,7 +93,7 @@ public static class PlayerEndpoints
         }
     }
 
-    public static async Task<IResult> UpdatePlayer(Player player, IPlayerRepo playerRepo, IValidator<Player> playerRequestValidator, CancellationToken ct)
+    private static async Task<IResult> UpdatePlayer(Player player, IPlayerRepo playerRepo, IValidator<Player> playerRequestValidator, CancellationToken ct)
     {
         try
         {
@@ -119,7 +119,7 @@ public static class PlayerEndpoints
         }
     }
 
-    public static async Task<IResult> DeletePlayer(string playerId, IPlayerRepo playerRepo, CancellationToken ct)
+    private static async Task<IResult> DeletePlayer(string playerId, IPlayerRepo playerRepo, CancellationToken ct)
     {
         try
         {

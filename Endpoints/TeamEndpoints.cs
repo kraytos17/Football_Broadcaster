@@ -17,7 +17,7 @@ public static class TeamEndpoints
         app.MapGet("api/teams", GetAllTeams);
     }
 
-    public static async Task<IResult> CreateTeam(Team team, ITeamRepo teamRepo, IValidator<Team> teamRequestValidator, CancellationToken ct)
+    private static async Task<IResult> CreateTeam(Team team, ITeamRepo teamRepo, IValidator<Team> teamRequestValidator, CancellationToken ct)
     {
         try
         {
@@ -43,15 +43,14 @@ public static class TeamEndpoints
         }
     }
 
-    public static async Task<IResult> GetTeamByName(string name, ITeamRepo teamRepo, CancellationToken ct)
+    private static async Task<IResult> GetTeamByName(string name, ITeamRepo teamRepo, CancellationToken ct)
     {
         try
         {
             ct.ThrowIfCancellationRequested();
             if (string.IsNullOrEmpty(name) || string.IsNullOrWhiteSpace(name))
             {
-                return TypedResults.BadRequest(
-                    "Name param cannot be empty or just whitespaces.");
+                return TypedResults.BadRequest("Name param cannot be empty or just whitespaces.");
             }
 
             var team = await teamRepo.GetTeam(name, ct);
@@ -74,7 +73,7 @@ public static class TeamEndpoints
         }
     }
 
-    public static async Task<IResult> GetTeamByTeamId(int teamId, ITeamRepo teamRepo, CancellationToken ct)
+    private static async Task<IResult> GetTeamByTeamId(int teamId, ITeamRepo teamRepo, CancellationToken ct)
     {
         try
         {
@@ -96,7 +95,7 @@ public static class TeamEndpoints
         }
     }
 
-    public static async Task<IResult> UpdateTeam(Team team, ITeamRepo teamRepo, IValidator<Team> teamRequestValidator, CancellationToken ct)
+    private static async Task<IResult> UpdateTeam(Team team, ITeamRepo teamRepo, IValidator<Team> teamRequestValidator, CancellationToken ct)
     {
         try
         {
@@ -106,13 +105,11 @@ public static class TeamEndpoints
             {
                 return TypedResults.BadRequest("Validation error, invalid team data.");
             }
-
             var updated = await teamRepo.UpdateTeam(team, ct);
             if (!updated)
             {
                 return TypedResults.StatusCode(500);
             }
-
             return TypedResults.Ok();
         }
         catch (Exception ex)
@@ -122,7 +119,7 @@ public static class TeamEndpoints
         }
     }
 
-    public static async Task<IResult> DeleteTeam(int teamId, ITeamRepo teamRepo, CancellationToken ct)
+    private static async Task<IResult> DeleteTeam(int teamId, ITeamRepo teamRepo, CancellationToken ct)
     {
         try
         {
@@ -147,7 +144,7 @@ public static class TeamEndpoints
         }
     }
 
-    public static async Task<IResult> GetAllTeams(ITeamRepo teamRepo, CancellationToken ct)
+    private static async Task<IResult> GetAllTeams(ITeamRepo teamRepo, CancellationToken ct)
     {
         try
         {

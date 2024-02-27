@@ -1,1 +1,1 @@
-# Gc_Broadcasting_Api
+# Proof of concept for gc-server

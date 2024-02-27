@@ -8,12 +8,11 @@ using Gc_Broadcasting_Api.Validator;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<DatabaseSettings>(builder.Configuration.GetSection("MongoDb"));
-//builder.Services.AddScoped<DatabaseSettings>();
+builder.Services.AddSingleton<DatabaseSettings>();
 builder.Services.AddScoped<IValidator<Player>, PlayerRequestValidator>();
-builder.Services.AddSingleton<IValidator<Team>, TeamRequestValidator>();
-builder.Services.AddSingleton<IPlayerRepo, PlayerRepository>();
-builder.Services.AddSingleton<ITeamRepo, TeamRepository>();
-builder.Services.AddSingleton<IAdminRepo, AdminRepository>();
+builder.Services.AddScoped<IValidator<Team>, TeamRequestValidator>();
+builder.Services.AddScoped<IPlayerRepo, PlayerRepository>();
+builder.Services.AddScoped<ITeamRepo, TeamRepository>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
@@ -28,5 +27,4 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 app.MapPlayerEndpoints();
 app.MapTeamEndpoints();
-app.MapAdminEndpoints();
 app.Run();
