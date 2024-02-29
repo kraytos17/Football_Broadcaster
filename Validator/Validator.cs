@@ -9,48 +9,22 @@ public sealed class PlayerRequestValidator : AbstractValidator<Player> {
         var branches = configuration["BranchNames"]?.Split(",");
         var positions = configuration["FootballPos"]?.Split(",");
 
-        RuleFor(x => x.Name)
+        RuleFor(x => x.FirstName)
             .Cascade(Stop)
             .NotEmpty()
             .MinimumLength(1)
             .MaximumLength(100)
             .Matches("^[a-zA-Z]+$");
-        RuleFor(x => x.Assists)
+        RuleFor(x => x.LastName)
             .Cascade(Stop)
-            .NotEmpty();
+            .NotEmpty()
+            .MinimumLength(1)
+            .MaximumLength(100)
+            .Matches("^[a-zA-Z]+$");
         RuleFor(x => x.Branch)
             .Cascade(Stop)
             .NotEmpty()
             .Must(x => branches != null && branches.Contains(x));
-        RuleFor(x => x.Position)
-            .Cascade(Stop)
-            .NotEmpty()
-            .Must(p => positions != null && positions.Contains(p));
-        RuleFor(x => x.Year)
-            .Cascade(Stop)
-            .NotEmpty()
-            .GreaterThanOrEqualTo(2020);
-        //RuleFor(x => x.Instagram)
-        //	.Cascade(CascadeMode.Stop)
-        //	.NotEmpty()
-        //	.Matches("^(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?\\/[a-zA-Z0-9]{2,}|((https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z]{2,}(\\.[a-zA-Z]{2,})(\\.[a-zA-Z]{2,})?)|(https:\\/\\/www\\.|http:\\/\\/www\\.|https:\\/\\/|http:\\/\\/)?[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}\\.[a-zA-Z0-9]{2,}(\\.[a-zA-Z0-9]{2,})?");
-        RuleFor(x => x.Age)
-            .Cascade(Stop)
-            .NotEmpty()
-            .GreaterThanOrEqualTo(18)
-            .LessThanOrEqualTo(26);
-        RuleFor(x => x.CollegeId)
-            .Cascade(Stop)
-            .NotEmpty()
-            .Matches("^B[0-9]{6}$");
-        RuleFor(x => x.Goals)
-            .Cascade(Stop)
-            .NotEmpty()
-            .GreaterThanOrEqualTo(0);
-        RuleFor(x => x.TeamId)
-            .Cascade(Stop)
-            .NotEmpty()
-            .GreaterThanOrEqualTo(1);
     }
 }
 
