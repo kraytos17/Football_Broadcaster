@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson;
+﻿using Gc_Broadcasting_Api.Enums;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace Gc_Broadcasting_Api.Models;
@@ -27,11 +28,11 @@ public class Player {
 
     [BsonElement("branch")]
     [BsonRequired]
-    public string Branch { get; set; } = string.Empty;
+    public Branches Branch { get; set; }
 
     [BsonElement("year")]
     [BsonRequired]
-    public string Year { get; set; } = string.Empty;
+    public Years Year { get; set; }
 
     [BsonElement("contactNo")]
     [BsonRequired]

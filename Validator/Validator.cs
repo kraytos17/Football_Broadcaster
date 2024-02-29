@@ -1,14 +1,12 @@
 ﻿using FluentValidation;
+using Gc_Broadcasting_Api.Enums;
 using Gc_Broadcasting_Api.Models;
 using static FluentValidation.CascadeMode;
 
 namespace Gc_Broadcasting_Api.Validator;
 
 public sealed class PlayerRequestValidator : AbstractValidator<Player> {
-    public PlayerRequestValidator(IConfiguration configuration) {
-        var branches = configuration["BranchNames"]?.Split(",");
-        var positions = configuration["FootballPos"]?.Split(",");
-
+    public PlayerRequestValidator() {
         RuleFor(x => x.FirstName)
             .Cascade(Stop)
             .NotEmpty()
@@ -23,15 +21,16 @@ public sealed class PlayerRequestValidator : AbstractValidator<Player> {
             .Matches("^[a-zA-Z]+$");
         RuleFor(x => x.Branch)
             .Cascade(Stop)
+            .NotEmpty();
+        RuleFor(x => x.Email)
+            .Cascade(Stop)
             .NotEmpty()
-            .Must(x => branches != null && branches.Contains(x));
+            .Matches("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$");
     }
 }
 
 public sealed class TeamRequestValidator : AbstractValidator<Team> {
-    public TeamRequestValidator(IConfiguration config) {
-        var teamCount = config["TeamNames"]!.Split(",").Length;
-
+    public TeamRequestValidator() {
         RuleFor(x => x.GamesPlayed)
             .Cascade(Stop)
             .GreaterThanOrEqualTo(0);
@@ -39,7 +38,7 @@ public sealed class TeamRequestValidator : AbstractValidator<Team> {
             .Cascade(Stop);
         RuleFor(x => x.LeaguePosition)
             .Cascade(Stop)
-            .InclusiveBetween(1, teamCount);
+            .InclusiveBetween(1, Enum.GetValues(typeof(Teams)).Length);
         RuleFor(x => x.MatchesLost)
             .Cascade(Stop);
         RuleFor(x => x.MatchesWon)
